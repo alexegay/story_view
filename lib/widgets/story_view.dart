@@ -383,6 +383,12 @@ class StoryView extends StatefulWidget {
   /// each time the full story completes when [repeat] is set to `true`.
   final VoidCallback? onComplete;
 
+  final Function(Direction?)? onHozontalSwipeComplete;
+
+  final VoidCallback? onPrev;
+
+  final VoidCallback? onNext;
+
   /// Callback for when a vertical swipe gesture is detected. If you do not
   /// want to listen to such event, do not provide it. For instance,
   /// for inline stories inside ListViews, it is preferrable to not to
@@ -415,6 +421,9 @@ class StoryView extends StatefulWidget {
     this.repeat = false,
     this.inline = false,
     this.onVerticalSwipeComplete,
+    this.onHozontalSwipeComplete,
+    this.onPrev,
+    this.onNext,
   })  : assert(storyItems != null && storyItems.length > 0,
             "[storyItems] should not be null or empty"),
         assert(progressPosition != null, "[progressPosition] cannot be null"),
@@ -438,6 +447,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
   StreamSubscription<PlaybackState>? _playbackSubscription;
 
   VerticalDragInfo? verticalDragInfo;
+  HorizontalDragInfo? horizontalDragInfo;
 
   StoryItem? get _currentStory {
     return widget.storyItems.firstWhereOrNull((it) => !it!.shown);
@@ -572,6 +582,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     }
 
     if (this._currentStory == widget.storyItems.first) {
+      widget.onPrev?.call();
       _beginPlay();
     } else {
       this._currentStory!.shown = false;
@@ -601,6 +612,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
       // this is the last page, progress animation should skip to end
       _animationController!
           .animateTo(1.0, duration: Duration(milliseconds: 10));
+      widget.onNext?.call();
     }
   }
 
@@ -669,6 +681,36 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                     widget.controller.next();
                   }
                 },
+                onHorizontalDragStart: widget.onHozontalSwipeComplete == null
+                    ? null
+                    : (details) {
+                        widget.controller.pause();
+                      },
+                onHorizontalDragUpdate: widget.onHozontalSwipeComplete == null
+                    ? null
+                    : (details) {
+                        if (horizontalDragInfo == null) {
+                          horizontalDragInfo = HorizontalDragInfo();
+                        }
+                        horizontalDragInfo!.update(details.primaryDelta!);
+                      },
+                onHorizontalDragCancel: widget.onHozontalSwipeComplete == null
+                    ? null
+                    : () {
+                        widget.controller.play();
+                      },
+                onHorizontalDragEnd: widget.onHozontalSwipeComplete == null
+                    ? null
+                    : (details) {
+                        widget.controller.play();
+                        if (!horizontalDragInfo!.cancel &&
+                            widget.onHozontalSwipeComplete != null) {
+                          widget.onHozontalSwipeComplete!(
+                              horizontalDragInfo!.direction);
+                        }
+
+                        horizontalDragInfo = null;
+                      },
                 onVerticalDragStart: widget.onVerticalSwipeComplete == null
                     ? null
                     : (details) {
