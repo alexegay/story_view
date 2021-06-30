@@ -529,7 +529,8 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
       return !it!.shown;
     })!;
 
-    if (widget.onStoryShow != null) {
+    if (widget.onStoryShow != null &&
+        this._currentStory != widget.storyItems.first) {
       widget.onStoryShow!(storyItem);
     }
 
@@ -583,7 +584,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
     if (this._currentStory == widget.storyItems.first) {
       widget.onPrev?.call();
-      // _beginPlay();
+      _beginPlay();
     } else {
       this._currentStory!.shown = false;
       int lastPos = widget.storyItems.indexOf(this._currentStory);
