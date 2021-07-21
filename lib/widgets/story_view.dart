@@ -224,7 +224,7 @@ class StoryItem {
     Key? key,
     Duration? duration,
     BoxFit imageFit = BoxFit.fitWidth,
-    String? caption,
+    Widget? caption,
     bool shown = false,
     Map<String, dynamic>? requestHeaders,
   }) {
@@ -240,23 +240,24 @@ class StoryItem {
                 requestHeaders: requestHeaders,
               ),
               SafeArea(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.only(bottom: 24),
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    color:
-                        caption != null ? Colors.black54 : Colors.transparent,
-                    child: caption != null
-                        ? Text(
-                            caption,
-                            style: TextStyle(fontSize: 15, color: Colors.white),
-                            textAlign: TextAlign.center,
-                          )
-                        : SizedBox(),
-                  ),
-                ),
+                child: caption != null ? caption : SizedBox(),
+                // Align(
+                //   alignment: Alignment.bottomCenter,
+                //   child: Container(
+                //     width: double.infinity,
+                //     margin: EdgeInsets.only(bottom: 24),
+                //     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                //     color:
+                //         caption != null ? Colors.black54 : Colors.transparent,
+                //     child: caption != null
+                //         ? Text(
+                //             caption,
+                //             style: TextStyle(fontSize: 15, color: Colors.white),
+                //             textAlign: TextAlign.center,
+                //           )
+                //         : SizedBox(),
+                //   ),
+                // ),
               )
             ],
           ),
