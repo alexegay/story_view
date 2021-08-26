@@ -32,11 +32,13 @@ class StoryItem {
   /// is because the next item to be displayed is taken by the last unshown
   /// story item.
   bool shown;
+  final Widget? caption;
 
   /// The page content
   final Widget view;
   StoryItem(
     this.view, {
+    this.caption,
     required this.duration,
     this.shown = false,
   }) : assert(duration != null, "[duration] should not be null");
@@ -127,38 +129,12 @@ class StoryItem {
               fit: imageFit,
               requestHeaders: requestHeaders,
             ),
-            SafeArea(
-              child: caption != null ? caption : SizedBox(),
-              // Align(
-              //   alignment: Alignment.bottomCenter,
-              //   child: Container(
-              //     width: double.infinity,
-              //     margin: EdgeInsets.only(
-              //       bottom: 24,
-              //     ),
-              //     padding: EdgeInsets.symmetric(
-              //       horizontal: 24,
-              //       vertical: 8,
-              //     ),
-              //     color: caption != null ? Colors.black54 : Colors.transparent,
-              //     child: caption != null
-              //         ? Text(
-              //             caption,
-              //             style: TextStyle(
-              //               fontSize: 15,
-              //               color: Colors.white,
-              //             ),
-              //             textAlign: TextAlign.center,
-              //           )
-              //         : SizedBox(),
-              //   ),
-              // ),
-            )
           ],
         ),
       ),
       shown: shown,
       duration: duration ?? Duration(seconds: 3),
+      caption: caption,
     );
   }
 
@@ -239,26 +215,6 @@ class StoryItem {
                 controller: controller,
                 requestHeaders: requestHeaders,
               ),
-              SafeArea(
-                child: caption != null ? caption : SizedBox(),
-                // Align(
-                //   alignment: Alignment.bottomCenter,
-                //   child: Container(
-                //     width: double.infinity,
-                //     margin: EdgeInsets.only(bottom: 24),
-                //     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                //     color:
-                //         caption != null ? Colors.black54 : Colors.transparent,
-                //     child: caption != null
-                //         ? Text(
-                //             caption,
-                //             style: TextStyle(fontSize: 15, color: Colors.white),
-                //             textAlign: TextAlign.center,
-                //           )
-                //         : SizedBox(),
-                //   ),
-                // ),
-              )
             ],
           ),
         ),
@@ -459,6 +415,12 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     var item = widget.storyItems.firstWhereOrNull((it) => !it!.shown);
     item ??= widget.storyItems.last;
     return item?.view ?? Container();
+  }
+
+  Widget get _currentCaption {
+    var item = widget.storyItems.firstWhereOrNull((it) => !it!.shown);
+    item ??= widget.storyItems.last;
+    return item?.caption ?? Container();
   }
 
   @override
@@ -764,6 +726,10 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                 ),
                 width: 70),
           ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: _currentCaption,
+          )
         ],
       ),
     );
