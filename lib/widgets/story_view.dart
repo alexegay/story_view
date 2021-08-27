@@ -414,13 +414,13 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
   Widget get _currentView {
     var item = widget.storyItems.firstWhereOrNull((it) => !it!.shown);
-    item ??= widget.storyItems.last;
+    item ??= widget.storyItems.first;
     return item?.view ?? Container();
   }
 
   Widget get _currentCaption {
     var item = widget.storyItems.firstWhereOrNull((it) => !it!.shown);
-    item ??= widget.storyItems.last;
+    item ??= widget.storyItems.first;
     return item?.caption ?? Container();
   }
 
@@ -434,10 +434,9 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     if (firstPage == null) {
       widget.storyItems.last!.shown = false;
 
-      // widget.storyItems.forEach((it2) {
-      //   it2!.shown = false;
-      // });
-
+      widget.storyItems.forEach((it2) {
+        it2!.shown = false;
+      });
     } else {
       final lastShownPos = widget.storyItems.indexOf(firstPage);
       widget.storyItems.sublist(lastShownPos).forEach((it) {
